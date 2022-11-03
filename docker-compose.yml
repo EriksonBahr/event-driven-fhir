@@ -1,0 +1,7 @@
+version: '3.1'
+services:
+  rabbitmq:
+    image: rabbitmq:3.9-management
+    ports:
+      - 5672:5672
+      - 8090:15672
