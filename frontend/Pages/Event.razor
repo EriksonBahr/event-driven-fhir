@@ -5,11 +5,7 @@
 @using Hl7.Fhir.Model
 @using Hl7.Fhir.Serialization
 @using System.Text
-@using System.Text.Json
-@using frontend.Data
-@using RabbitMQ.Client;
 @using RabbitMQ.Client.Events;
-@inject WeatherForecastService ForecastService
 @inject EventingBasicConsumer consumer
 
 <h1>Event driven fhir data</h1>

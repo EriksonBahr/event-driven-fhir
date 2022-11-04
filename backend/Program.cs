@@ -18,10 +18,11 @@ builder.Services.AddHttpClient("FhirHttpClient").
         AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip
     });
 
-var connFactory = new ConnectionFactory() { HostName = "localhost" };
-var conn = connFactory.CreateConnection();
-conn.DeclareFhirQueues();
+
 builder.Services.AddSingleton(ctx => {
+    var connFactory = new ConnectionFactory() { HostName = "localhost" };
+    var conn = connFactory.CreateConnection();
+    conn.DeclareFhirQueues();
     return conn;
 });
 

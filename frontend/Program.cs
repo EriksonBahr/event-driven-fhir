@@ -9,11 +9,14 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
 
-var connFactory = new ConnectionFactory() { HostName = "localhost" };
-var conn = connFactory.CreateConnection();
+builder.Services.AddSingleton(ctx => {
+    var connFactory = new ConnectionFactory() { HostName = "localhost" };
+    return connFactory.CreateConnection();
+});
+
 builder.Services.AddScoped(ctx => {
+    var conn = ctx.GetRequiredService<IConnection>();
     var model = conn.CreateModel();
     var queueName = model.QueueDeclare().QueueName;
     model.QueueBind(queue: queueName,
