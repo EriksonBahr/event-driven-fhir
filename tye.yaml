@@ -1,0 +1,21 @@
+name: event-driven-fhir
+services:
+- name: frontend
+  project: frontend/frontend.csproj
+  replicas: 2
+  bindings:
+  - port: 8080
+- name: backend
+  project: backend/backend.csproj
+  bindings:
+  - port: 8081
+- name: rabbit
+  image: rabbitmq:3-management
+  bindings:
+    - name: ui
+      protocol: http
+      port: 15672
+      containerPort: 15672
+    - name: amqp
+      protocol: amqp
+      port: 5672
