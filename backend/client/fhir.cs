@@ -4,6 +4,7 @@ using backend.queue;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 using Hl7.Fhir.Serialization;
+using model.fhir;
 using RabbitMQ.Client;
 
 namespace backend.client;
@@ -31,13 +32,18 @@ public class MQFhirClient: IFhirClient
 
     public Task<TResource> CreateAsync<TResource>(TResource resource) where TResource : Resource
     {
-        var serializer = new FhirJsonSerializer();
         return Task<TResource>.Run(() => {
             var res = fc.Create<TResource>(resource);
-            fhirDataQueue.BasicPublish(exchange: "device",
+            var fhirEvent = new FhirEvent<TResource> {
+                HTTPVerb = HTTPVerb.POST,
+                FhirResource = res,
+            };
+            var options = new JsonSerializerOptions().ForFhir(typeof(TResource).Assembly);
+            var fhirEventJson = JsonSerializer.Serialize(fhirEvent, options);
+            fhirDataQueue.BasicPublish(exchange: res.TypeName.ToLower(),
                         routingKey: "",
                         basicProperties: null,
-                        body: serializer.SerializeToBytes(res));
+                        body: Encoding.ASCII.GetBytes(fhirEventJson));
             Console.WriteLine(" [x] Sent {0}", res);
             return res;
         });

@@ -6,6 +6,8 @@
 @using Hl7.Fhir.Serialization
 @using System.Text
 @using RabbitMQ.Client.Events;
+@using System.Text.Json
+@using model.fhir;
 @inject EventingBasicConsumer consumer
 
 <h1>Event driven fhir data</h1>
@@ -52,9 +54,11 @@ else
                 }
                 var body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
-                var parser = new FhirJsonParser();
-                var device = parser.Parse<Device>(message);
-                devices = devices.Append(device).ToArray();
+                @* var parser = new FhirJsonParser(); *@
+                var options = new JsonSerializerOptions().ForFhir(typeof(Patient).Assembly).Pretty();
+                var device = JsonSerializer.Deserialize<FhirEvent<Device>>(message, options);
+                @* var device = parser.Parse<FhirEvent>(message); *@
+                devices = devices.Append(device.FhirResource).ToArray();
                 await InvokeAsync(() => {
                      StateHasChanged();
                 });
