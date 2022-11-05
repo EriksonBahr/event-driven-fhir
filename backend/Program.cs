@@ -19,10 +19,11 @@ builder.Services.AddHttpClient("FhirHttpClient").
     });
 
 
+var connFactory = new ConnectionFactory() { HostName = "localhost" };
+var conn = connFactory.CreateConnection();
+conn.DeclareFhirQueues();
+
 builder.Services.AddSingleton(ctx => {
-    var connFactory = new ConnectionFactory() { HostName = "localhost" };
-    var conn = connFactory.CreateConnection();
-    conn.DeclareFhirQueues();
     return conn;
 });
 
