@@ -2,7 +2,6 @@ name: event-driven-fhir
 services:
 - name: frontend
   project: frontend/frontend.csproj
-  replicas: 2
   bindings:
   - port: 8080
 - name: backend
