@@ -54,11 +54,9 @@ else
                 }
                 var body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
-                @* var parser = new FhirJsonParser(); *@
                 var options = new JsonSerializerOptions().ForFhir(typeof(Patient).Assembly).Pretty();
-                var device = JsonSerializer.Deserialize<FhirEvent<Device>>(message, options);
-                @* var device = parser.Parse<FhirEvent>(message); *@
-                devices = devices.Append(device.FhirResource).ToArray();
+                var fhirEvent = JsonSerializer.Deserialize<FhirEvent<Device>>(message, options);
+                devices = devices.Append(fhirEvent.FhirResource).ToArray();
                 await InvokeAsync(() => {
                      StateHasChanged();
                 });
